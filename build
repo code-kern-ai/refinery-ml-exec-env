@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker build -t registry.dev.onetask.ai/code-kern-ai/ml-execution-environment:main .
