@@ -1,3 +1,12 @@
 #!/bin/bash
+IS_ARM64=""
+currentArch="$(uname -m)"
+if [ "$currentArch" == "arm64" ];
+then
+    echo "architecture: arm64"
+    IS_ARM64="_arm64"
+else
+    echo "architecture: $currentArch"
+fi
 
-docker build -t registry.dev.onetask.ai/code-kern-ai/ml-execution-environment:main .
+docker build -t registry.dev.onetask.ai/code-kern-ai/refinery-ml-exec-env:dev$IS_ARM64 .
