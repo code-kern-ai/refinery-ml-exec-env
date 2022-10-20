@@ -1,7 +1,9 @@
-numpy==1.22.3
-pandas==1.4.2
-requests==2.27.1
+numpy
+pandas
+requests
 scikit-learn==1.0.2
-scipy==1.8.0
-sequencelearn==0.0.8
-torch==1.11.0
+scipy==1.9.0
+sequencelearn==0.0.9
+torch
+
+# sequence-learn does not need additional requirements
