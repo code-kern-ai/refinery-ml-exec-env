@@ -1,4 +1,4 @@
-FROM kernai/refinery-parent-images:v0.0.3-torch-cpu
+FROM kernai/refinery-parent-images:v1.5.0-torch-cpu
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y curl && \
