@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
+import os
 import sys
 import util
 import requests
 import pandas as pd
-import truss
+from joblib import dump, load
 import shutil
 
 CONSTANT__OUTSIDE = "OUTSIDE"  # enum from graphql-gateway; if it changes, the extraction service breaks!
-TRUSS_DIR = "truss_model"
+MODEL_DIR = "truss_model"
 
 def run_classification(corpus_embeddings, corpus_labels, corpus_ids, training_ids):
     from active_transfer_learning import ATLClassifier
@@ -38,7 +39,9 @@ def run_classification(corpus_embeddings, corpus_labels, corpus_ids, training_id
             )
     if len(ml_results_by_record_id) == 0:
         print("No records were predicted. Try lowering the confidence threshold.")
-    truss.mk_truss(classifier.model, target_directory=TRUSS_DIR)
+
+    
+    dump(classifier.model, os.path.join(MODEL_DIR, f'parameters.joblib'))
     return ml_results_by_record_id
 
 
@@ -78,7 +81,7 @@ def run_extraction(corpus_embeddings, corpus_labels, corpus_ids, training_ids):
         ml_results_by_record_id[record_id] = predictions_with_probabilities
     if len(ml_results_by_record_id) == 0:
         print("No records were predicted. Try lowering the confidence threshold.")
-    truss.mk_truss(extractor.model, target_directory=TRUSS_DIR)
+    dump(extractor.model, os.path.join(MODEL_DIR, f'parameters.joblib'))
     return ml_results_by_record_id
 
 
@@ -88,6 +91,8 @@ if __name__ == "__main__":
 
     corpus_embeddings, corpus_labels, corpus_ids, training_ids = util.get_corpus()
     is_extractor = any([isinstance(val, list) for val in corpus_labels["manual"]])
+
+    os.mkdir(MODEL_DIR)
 
     if is_extractor:
         print("Running extractor.")
@@ -103,7 +108,7 @@ if __name__ == "__main__":
     print("Finished execution.")
     requests.put(payload_url, json=ml_results_by_record_id)
 
-    shutil.make_archive(TRUSS_DIR, "zip", TRUSS_DIR)
-    with open(TRUSS_DIR + ".zip", "rb") as f:
+    shutil.make_archive(MODEL_DIR, "zip", MODEL_DIR)
+    with open(MODEL_DIR + ".zip", "rb") as f:
         requests.put(model_name_url, data=f.read())
         
