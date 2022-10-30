@@ -4,7 +4,7 @@ import sys
 import util
 import requests
 import pandas as pd
-from joblib import dump, load
+from joblib import dump
 import shutil
 
 CONSTANT__OUTSIDE = "OUTSIDE"  # enum from graphql-gateway; if it changes, the extraction service breaks!
@@ -17,6 +17,7 @@ def run_classification(corpus_embeddings, corpus_labels, corpus_ids, training_id
     prediction_probabilities = classifier.fit_predict(
         corpus_embeddings, corpus_labels, corpus_ids, training_ids
     )
+    classifier.save_model_to_path(os.path.join(MODEL_DIR, f'parameters.joblib'))
 
     prediction_indices = prediction_probabilities.argmax(axis=1)
     predictions_with_probabilities = []
@@ -41,7 +42,6 @@ def run_classification(corpus_embeddings, corpus_labels, corpus_ids, training_id
         print("No records were predicted. Try lowering the confidence threshold.")
 
     
-    dump(classifier.model, os.path.join(MODEL_DIR, f'parameters.joblib'))
     return ml_results_by_record_id
 
 
@@ -52,6 +52,8 @@ def run_extraction(corpus_embeddings, corpus_labels, corpus_ids, training_ids):
     predictions, probabilities = extractor.fit_predict(
         corpus_embeddings, corpus_labels, corpus_ids, training_ids
     )
+    extractor.save_model_to_path(os.path.join(MODEL_DIR, f'parameters.joblib'))
+
     ml_results_by_record_id = {}
     for record_id, prediction, probability in zip(
         corpus_ids, predictions, probabilities
@@ -81,7 +83,6 @@ def run_extraction(corpus_embeddings, corpus_labels, corpus_ids, training_ids):
         ml_results_by_record_id[record_id] = predictions_with_probabilities
     if len(ml_results_by_record_id) == 0:
         print("No records were predicted. Try lowering the confidence threshold.")
-    dump(extractor.model, os.path.join(MODEL_DIR, f'parameters.joblib'))
     return ml_results_by_record_id
 
 

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import util
 from typing import Callable, List, Optional
+from joblib import load, dump
 
 
 def parametrized(decorator: Callable):
@@ -89,6 +90,13 @@ class BaseModel(ABC):
         self.embedding_name = None
         self.min_confidence = None
         self.label_names = None
+
+    def save_model_to_path(self, file_path: str):
+        dump(self.model, file_path)
+
+
+    def load_model_from_path(self, file_path: str):
+        self.model = load(file_path)
 
     @abstractmethod
     def fit(self, embeddings, labels):
