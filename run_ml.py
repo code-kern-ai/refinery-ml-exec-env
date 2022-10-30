@@ -103,5 +103,7 @@ if __name__ == "__main__":
     print("Finished execution.")
     requests.put(payload_url, json=ml_results_by_record_id)
 
-    shutil.make_archive("model", "zip", TRUSS_DIR)
-    requests.put(model_name_url, files={"file": open("model.zip", "rb")})
+    shutil.make_archive(TRUSS_DIR, "zip", TRUSS_DIR)
+    with open(TRUSS_DIR + ".zip", "rb") as f:
+        requests.put(model_name_url, data=f.read())
+        
