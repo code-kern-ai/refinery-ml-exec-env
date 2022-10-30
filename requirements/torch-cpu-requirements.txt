@@ -47,7 +47,7 @@ numpy==1.23.4
     #   -r requirements/common-requirements.in
     #   pandas
     #   transformers
-packaging==21.3
+packaging>=20.0
     # via
     #   huggingface-hub
     #   transformers
