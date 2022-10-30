@@ -20,6 +20,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 def get_corpus():
     with open("input.json", "r") as infile:
         input_data = json.load(infile)
+        call_context = input_data["call_context"]
         embedding_type = input_data["embedding_type"]
         embedding_name = input_data["embedding_name"]
         labels = input_data["labels"]
@@ -48,7 +49,7 @@ def get_corpus():
     except:
         print("Can't parse the embedding. Please contact the support.")
         raise ValueError("Can't parse the embedding. Please contact the support.")
-    return embeddings, labels, ids, training_ids
+    return call_context, embeddings, labels, ids, training_ids
 
 
 def transform_corpus_classification_inference(embeddings):

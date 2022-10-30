@@ -4,20 +4,24 @@ import sys
 import util
 import requests
 import pandas as pd
-from joblib import dump
+import requests, zipfile, io
 import shutil
 
 CONSTANT__OUTSIDE = "OUTSIDE"  # enum from graphql-gateway; if it changes, the extraction service breaks!
-MODEL_DIR = "truss_model"
+MODEL_DIR = "model_params"
 
-def run_classification(corpus_embeddings, corpus_labels, corpus_ids, training_ids):
+def run_classification(corpus_embeddings, corpus_labels, corpus_ids, training_ids, call_context):
     from active_transfer_learning import ATLClassifier
 
     classifier = ATLClassifier()
-    prediction_probabilities = classifier.fit_predict(
-        corpus_embeddings, corpus_labels, corpus_ids, training_ids
-    )
-    classifier.save_model_to_path(os.path.join(MODEL_DIR, f'parameters.joblib'))
+    if call_context == "single_record":
+        classifier.load_model_from_path(os.path.join(MODEL_DIR, f'parameters.joblib'))
+        prediction_probabilities = classifier.predict(corpus_embeddings)
+    else:
+        prediction_probabilities = classifier.fit_predict(
+            corpus_embeddings, corpus_labels, corpus_ids, training_ids
+        )
+        classifier.save_model_to_path(os.path.join(MODEL_DIR, f'parameters.joblib'))
 
     prediction_indices = prediction_probabilities.argmax(axis=1)
     predictions_with_probabilities = []
@@ -45,14 +49,18 @@ def run_classification(corpus_embeddings, corpus_labels, corpus_ids, training_id
     return ml_results_by_record_id
 
 
-def run_extraction(corpus_embeddings, corpus_labels, corpus_ids, training_ids):
+def run_extraction(corpus_embeddings, corpus_labels, corpus_ids, training_ids, call_context):
     from active_transfer_learning import ATLExtractor
 
     extractor = ATLExtractor()
-    predictions, probabilities = extractor.fit_predict(
-        corpus_embeddings, corpus_labels, corpus_ids, training_ids
-    )
-    extractor.save_model_to_path(os.path.join(MODEL_DIR, f'parameters.joblib'))
+    if call_context == "single_record":
+        extractor.load_model_from_path(os.path.join(MODEL_DIR, f'parameters.joblib'))
+        predictions, probabilities = extractor.predict_proba(corpus_embeddings)
+    else:
+        predictions, probabilities = extractor.fit_predict(
+            corpus_embeddings, corpus_labels, corpus_ids, training_ids
+        )
+        extractor.save_model_to_path(os.path.join(MODEL_DIR, f'parameters.joblib'))
 
     ml_results_by_record_id = {}
     for record_id, prediction, probability in zip(
@@ -90,26 +98,31 @@ if __name__ == "__main__":
     _, payload_url, model_name_url = sys.argv
     print("Preparing data for machine learning.")
 
-    corpus_embeddings, corpus_labels, corpus_ids, training_ids = util.get_corpus()
+    call_context, corpus_embeddings, corpus_labels, corpus_ids, training_ids = util.get_corpus()
     is_extractor = any([isinstance(val, list) for val in corpus_labels["manual"]])
 
     os.mkdir(MODEL_DIR)
+    if call_context == "single_record":
+        response = requests.get(model_name_url)
+        z = zipfile.ZipFile(io.BytesIO(response.content))
+        z.extractall(MODEL_DIR)
 
     if is_extractor:
         print("Running extractor.")
         ml_results_by_record_id = run_extraction(
-            corpus_embeddings, corpus_labels, corpus_ids, training_ids
+            corpus_embeddings, corpus_labels, corpus_ids, training_ids, call_context
         )
     else:
         print("Running classifier.")
         ml_results_by_record_id = run_classification(
-            corpus_embeddings, corpus_labels, corpus_ids, training_ids
+            corpus_embeddings, corpus_labels, corpus_ids, training_ids, call_context
         )
 
     print("Finished execution.")
     requests.put(payload_url, json=ml_results_by_record_id)
 
-    shutil.make_archive(MODEL_DIR, "zip", MODEL_DIR)
-    with open(MODEL_DIR + ".zip", "rb") as f:
-        requests.put(model_name_url, data=f.read())
+    if call_context != "single_record":
+        shutil.make_archive(MODEL_DIR, "zip", MODEL_DIR)
+        with open(MODEL_DIR + ".zip", "rb") as f:
+            requests.put(model_name_url, data=f.read())
         

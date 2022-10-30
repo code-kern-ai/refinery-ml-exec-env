@@ -92,11 +92,21 @@ class BaseModel(ABC):
         self.label_names = None
 
     def save_model_to_path(self, file_path: str):
-        dump(self.model, file_path)
+        configs = {
+            "model": self.model,
+            "embedding_name": self.embedding_name,
+            "min_confidence": self.min_confidence,
+            "label_names": self.label_names,
+        }
+        dump(configs, file_path)
 
 
     def load_model_from_path(self, file_path: str):
-        self.model = load(file_path)
+        configs = load(file_path)
+        self.model = configs["model"]
+        self.embedding_name = configs["embedding_name"]
+        self.min_confidence = configs["min_confidence"]
+        self.label_names = configs["label_names"]
 
     @abstractmethod
     def fit(self, embeddings, labels):
@@ -106,14 +116,18 @@ class BaseModel(ABC):
     def predict_proba(self, embeddings):
         pass
 
-    def fit_predict(self, embeddings, labels, records_ids, training_ids):
-        self.records_ids = records_ids
-        self.training_ids = training_ids
-        self.fit(embeddings, labels)
+    def predict(self, embeddings):
         predictions = self.predict_proba(embeddings)
         if self.label_names is None:
             self.label_names = self.model.classes_
         return predictions
+
+    def fit_predict(self, embeddings, labels, records_ids, training_ids):
+        self.records_ids = records_ids
+        self.training_ids = training_ids
+        self.fit(embeddings, labels)
+        return self.predict(embeddings)
+        
 
 
 class LearningClassifier(BaseModel):
