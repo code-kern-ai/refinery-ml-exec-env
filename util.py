@@ -20,6 +20,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 def get_corpus():
     with open("input.json", "r") as infile:
         input_data = json.load(infile)
+        information_source_id = input_data["information_source_id"]
         embedding_type = input_data["embedding_type"]
         embedding_name = input_data["embedding_name"]
         labels = input_data["labels"]
@@ -45,10 +46,16 @@ def get_corpus():
                     if x != "data"
                 ]
             }
-    except:
+    except Exception:
         print("Can't parse the embedding. Please contact the support.")
         raise ValueError("Can't parse the embedding. Please contact the support.")
-    return embeddings, labels, ids, training_ids
+    return (
+        information_source_id,
+        embeddings,
+        labels,
+        ids,
+        training_ids,
+    )
 
 
 def transform_corpus_classification_inference(embeddings):
@@ -94,7 +101,7 @@ def transform_corpus_extraction_fit(
         for _, row in df_labels.loc[df_labels.idx == idx].iterrows():
             for token_idx in row.token_list:
                 label_vector[token_idx] = row.label_name
-            np.place(label_vector, label_vector == None, CONSTANT__OUTSIDE)
+            np.place(label_vector, label_vector is None, CONSTANT__OUTSIDE)
         labels_prepared.append(label_vector.tolist())
 
     keep_idxs = list(df_labels.idx.unique())
