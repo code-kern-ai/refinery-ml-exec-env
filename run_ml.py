@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
-import util
+from util import util
 import requests
 import pandas as pd
 import pickle
@@ -16,7 +16,7 @@ def run_classification(
     corpus_ids,
     training_ids,
 ):
-    from active_transfer_learning import ATLClassifier
+    from util.active_transfer_learning import ATLClassifier
 
     classifier = ATLClassifier()
     prediction_probabilities = classifier.fit_predict(
@@ -54,7 +54,7 @@ def run_classification(
 
 
 def run_extraction(corpus_embeddings, corpus_labels, corpus_ids, training_ids):
-    from active_transfer_learning import ATLExtractor
+    from util.active_transfer_learning import ATLExtractor
 
     extractor = ATLExtractor()
     predictions, probabilities = extractor.fit_predict(

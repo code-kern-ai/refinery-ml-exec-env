@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-import util
+from . import util
 from typing import Callable, List, Optional
 
 

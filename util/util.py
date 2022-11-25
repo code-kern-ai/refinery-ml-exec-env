@@ -2,7 +2,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from run_ml import CONSTANT__OUTSIDE
+CONSTANT__OUTSIDE = "OUTSIDE"
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
