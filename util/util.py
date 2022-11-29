@@ -101,7 +101,7 @@ def transform_corpus_extraction_fit(
         for _, row in df_labels.loc[df_labels.idx == idx].iterrows():
             for token_idx in row.token_list:
                 label_vector[token_idx] = row.label_name
-            np.place(label_vector, label_vector is None, CONSTANT__OUTSIDE)
+            np.place(label_vector, label_vector == None, CONSTANT__OUTSIDE)
         labels_prepared.append(label_vector.tolist())
 
     keep_idxs = list(df_labels.idx.unique())
