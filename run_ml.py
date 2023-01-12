@@ -53,13 +53,22 @@ def run_classification(
     return ml_results_by_record_id
 
 
-def run_extraction(corpus_embeddings, corpus_labels, corpus_ids, training_ids):
+def run_extraction(
+    information_source_id, corpus_embeddings, corpus_labels, corpus_ids, training_ids
+):
     from util.active_transfer_learning import ATLExtractor
 
     extractor = ATLExtractor()
     predictions, probabilities = extractor.fit_predict(
         corpus_embeddings, corpus_labels, corpus_ids, training_ids
     )
+    pickle_path = os.path.join(
+        "/inference", f"active-learning-{information_source_id}.pkl"
+    )
+    with open(pickle_path, "wb") as f:
+        pickle.dump(extractor, f)
+        print("Saved model to disk", flush=True)
+
     ml_results_by_record_id = {}
     for record_id, prediction, probability in zip(
         corpus_ids, predictions, probabilities
@@ -108,7 +117,11 @@ if __name__ == "__main__":
     if is_extractor:
         print("Running extractor.")
         ml_results_by_record_id = run_extraction(
-            corpus_embeddings, corpus_labels, corpus_ids, training_ids
+            information_source_id,
+            corpus_embeddings,
+            corpus_labels,
+            corpus_ids,
+            training_ids,
         )
     else:
         print("Running classifier.")
