@@ -24,7 +24,7 @@ def run_classification(
     )
     if os.path.exists("/inference"):
         pickle_path = os.path.join(
-            "/inference", f"active-learning-{information_source_id}.pkl"
+            "/inference", f"active-learner-{information_source_id}.pkl"
         )
         with open(pickle_path, "wb") as f:
             pickle.dump(classifier, f)
@@ -65,7 +65,7 @@ def run_extraction(
     )
     if os.path.exists("/inference"):
         pickle_path = os.path.join(
-            "/inference", f"active-learning-{information_source_id}.pkl"
+            "/inference", f"active-learner-{information_source_id}.pkl"
         )
         with open(pickle_path, "wb") as f:
             pickle.dump(extractor, f)
