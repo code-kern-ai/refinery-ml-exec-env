@@ -22,12 +22,13 @@ def run_classification(
     prediction_probabilities = classifier.fit_predict(
         corpus_embeddings, corpus_labels, corpus_ids, training_ids
     )
-    pickle_path = os.path.join(
-        "/inference", f"active-learning-{information_source_id}.pkl"
-    )
-    with open(pickle_path, "wb") as f:
-        pickle.dump(classifier, f)
-        print("Saved model to disk", flush=True)
+    if os.path.exists("/inference"):
+        pickle_path = os.path.join(
+            "/inference", f"active-learning-{information_source_id}.pkl"
+        )
+        with open(pickle_path, "wb") as f:
+            pickle.dump(classifier, f)
+            print("Saved model to disk", flush=True)
 
     prediction_indices = prediction_probabilities.argmax(axis=1)
     predictions_with_probabilities = []
@@ -62,12 +63,13 @@ def run_extraction(
     predictions, probabilities = extractor.fit_predict(
         corpus_embeddings, corpus_labels, corpus_ids, training_ids
     )
-    pickle_path = os.path.join(
-        "/inference", f"active-learning-{information_source_id}.pkl"
-    )
-    with open(pickle_path, "wb") as f:
-        pickle.dump(extractor, f)
-        print("Saved model to disk", flush=True)
+    if os.path.exists("/inference"):
+        pickle_path = os.path.join(
+            "/inference", f"active-learning-{information_source_id}.pkl"
+        )
+        with open(pickle_path, "wb") as f:
+            pickle.dump(extractor, f)
+            print("Saved model to disk", flush=True)
 
     ml_results_by_record_id = {}
     for record_id, prediction, probability in zip(
