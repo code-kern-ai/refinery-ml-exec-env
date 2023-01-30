@@ -5,16 +5,15 @@ from util import util
 import requests
 import pandas as pd
 import pickle
-
-CONSTANT__OUTSIDE = "OUTSIDE"  # enum from graphql-gateway; if it changes, the extraction service breaks!
+from typing import List, Dict, Tuple, Any
 
 
 def run_classification(
-    information_source_id,
-    corpus_embeddings,
-    corpus_labels,
-    corpus_ids,
-    training_ids,
+    information_source_id: str,
+    corpus_embeddings: Dict[str, List[List[float]]],
+    corpus_labels: List[str],
+    corpus_ids: List[str],
+    training_ids: List[str],
 ):
     from util.active_transfer_learning import ATLClassifier
 
@@ -55,7 +54,11 @@ def run_classification(
 
 
 def run_extraction(
-    information_source_id, corpus_embeddings, corpus_labels, corpus_ids, training_ids
+    information_source_id: str,
+    corpus_embeddings: Dict[str, List[Any]],
+    corpus_labels: List[Tuple[str, str, List[Any]]],
+    corpus_ids: List[str],
+    training_ids: List[str],
 ):
     from util.active_transfer_learning import ATLExtractor
 
@@ -83,7 +86,7 @@ def run_extraction(
         predictions_with_probabilities = []
         new_start_idx = True
         for idx, row in df.loc[
-            (df.prediction != CONSTANT__OUTSIDE)
+            (df.prediction != util.CONSTANT__OUTSIDE)
             & (df.prediction.isin(extractor.label_names))
             & (df.probability > extractor.min_confidence)
         ].iterrows():

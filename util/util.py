@@ -2,7 +2,7 @@ import json
 import numpy as np
 import pandas as pd
 
-CONSTANT__OUTSIDE = "OUTSIDE"
+CONSTANT__OUTSIDE = "OUTSIDE"  # enum from graphql-gateway; if it changes, the extraction service breaks!
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
