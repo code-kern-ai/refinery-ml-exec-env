@@ -2,7 +2,7 @@ import json
 import numpy as np
 import pandas as pd
 
-from run_ml import CONSTANT__OUTSIDE
+CONSTANT__OUTSIDE = "OUTSIDE"  # enum from graphql-gateway; if it changes, the extraction service breaks!
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -20,6 +20,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 def get_corpus():
     with open("input.json", "r") as infile:
         input_data = json.load(infile)
+        information_source_id = input_data["information_source_id"]
         embedding_type = input_data["embedding_type"]
         embedding_name = input_data["embedding_name"]
         labels = input_data["labels"]
@@ -45,10 +46,16 @@ def get_corpus():
                     if x != "data"
                 ]
             }
-    except:
+    except Exception:
         print("Can't parse the embedding. Please contact the support.")
         raise ValueError("Can't parse the embedding. Please contact the support.")
-    return embeddings, labels, ids, training_ids
+    return (
+        information_source_id,
+        embeddings,
+        labels,
+        ids,
+        training_ids,
+    )
 
 
 def transform_corpus_classification_inference(embeddings):
