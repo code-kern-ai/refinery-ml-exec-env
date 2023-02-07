@@ -22,7 +22,7 @@ def run_classification(
     prediction_probabilities = classifier.fit_predict(
         corpus_embeddings, corpus_labels, corpus_ids, training_ids
     )
-    print("progress: 0.5", flush=True)
+    print("progress: 0.8", flush=True)
     if os.path.exists("/inference"):
         pickle_path = os.path.join(
             "/inference", f"active-learner-{information_source_id}.pkl"
@@ -38,7 +38,7 @@ def run_classification(
         prediction = classifier.model.classes_[probas.argmax()]
         predictions_with_probabilities.append([proba, prediction])
 
-    print("progress: 0.8", flush=True)
+    print("progress: 0.9", flush=True)
     ml_results_by_record_id = {}
     for record_id, (probability, prediction) in zip(
         corpus_ids, predictions_with_probabilities
@@ -51,7 +51,7 @@ def run_classification(
                 probability,
                 prediction,
             )
-    print("progress: 0.9", flush=True)
+    print("progress: 0.95", flush=True)
     if len(ml_results_by_record_id) == 0:
         print(
             "No records were predicted. Try lowering the confidence threshold.",
