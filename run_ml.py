@@ -17,12 +17,12 @@ def run_classification(
 ):
     from util.active_transfer_learning import ATLClassifier
 
-    print("progress: 0.05")
+    print("progress: 0.05", flush=True)
     classifier = ATLClassifier()
     prediction_probabilities = classifier.fit_predict(
         corpus_embeddings, corpus_labels, corpus_ids, training_ids
     )
-    print("progress: 0.5")
+    print("progress: 0.5", flush=True)
     if os.path.exists("/inference"):
         pickle_path = os.path.join(
             "/inference", f"active-learner-{information_source_id}.pkl"
@@ -38,7 +38,7 @@ def run_classification(
         prediction = classifier.model.classes_[probas.argmax()]
         predictions_with_probabilities.append([proba, prediction])
 
-    print("progress: 0.8")
+    print("progress: 0.8", flush=True)
     ml_results_by_record_id = {}
     for record_id, (probability, prediction) in zip(
         corpus_ids, predictions_with_probabilities
@@ -51,9 +51,12 @@ def run_classification(
                 probability,
                 prediction,
             )
-    print("progress: 0.9")
+    print("progress: 0.9", flush=True)
     if len(ml_results_by_record_id) == 0:
-        print("No records were predicted. Try lowering the confidence threshold.")
+        print(
+            "No records were predicted. Try lowering the confidence threshold.",
+            flush=True,
+        )
     return ml_results_by_record_id
 
 
@@ -66,12 +69,12 @@ def run_extraction(
 ):
     from util.active_transfer_learning import ATLExtractor
 
-    print("progress: 0.05")
+    print("progress: 0.05", flush=True)
     extractor = ATLExtractor()
     predictions, probabilities = extractor.fit_predict(
         corpus_embeddings, corpus_labels, corpus_ids, training_ids
     )
-    print("progress: 0.5")
+    print("progress: 0.5", flush=True)
     if os.path.exists("/inference"):
         pickle_path = os.path.join(
             "/inference", f"active-learner-{information_source_id}.pkl"
@@ -110,17 +113,20 @@ def run_extraction(
         ml_results_by_record_id[record_id] = predictions_with_probabilities
         if idx % 100 == 0:
             progress = round((idx + 1) / amount, 4) * 0.5 + 0.5
-            print("progress: ", progress)
+            print("progress: ", progress, flush=True)
 
-    print("progress: 0.9")
+    print("progress: 0.9", flush=True)
     if len(ml_results_by_record_id) == 0:
-        print("No records were predicted. Try lowering the confidence threshold.")
+        print(
+            "No records were predicted. Try lowering the confidence threshold.",
+            flush=True,
+        )
     return ml_results_by_record_id
 
 
 if __name__ == "__main__":
     _, payload_url = sys.argv
-    print("Preparing data for machine learning.")
+    print("Preparing data for machine learning.", flush=True)
 
     (
         information_source_id,
@@ -132,7 +138,7 @@ if __name__ == "__main__":
     is_extractor = any([isinstance(val, list) for val in corpus_labels["manual"]])
 
     if is_extractor:
-        print("Running extractor.")
+        print("Running extractor.", flush=True)
         ml_results_by_record_id = run_extraction(
             information_source_id,
             corpus_embeddings,
@@ -141,7 +147,7 @@ if __name__ == "__main__":
             training_ids,
         )
     else:
-        print("Running classifier.")
+        print("Running classifier.", flush=True)
         ml_results_by_record_id = run_classification(
             information_source_id,
             corpus_embeddings,
@@ -150,6 +156,6 @@ if __name__ == "__main__":
             training_ids,
         )
 
-    print("progress: 1")
-    print("Finished execution.")
+    print("progress: 1", flush=True)
+    print("Finished execution.", flush=True)
     requests.put(payload_url, json=ml_results_by_record_id)
