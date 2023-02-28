@@ -1,4 +1,5 @@
 -r torch-cpu-requirements.txt
-scikit-learn==1.1.2
-scipy==1.9.0
+#included in base requirements since 1.8.2 because of scikit-optimize
+# scikit-learn==1.2.1
+# scipy==1.9.0 
 sequencelearn==0.0.9
