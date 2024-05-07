@@ -9,4 +9,4 @@ else
     echo "architecture: $currentArch"
 fi
 
-docker build -t registry.dev.onetask.ai/code-kern-ai/refinery-ml-exec-env:dev$IS_ARM64 .
+docker build -t registry.dev.kern.ai/code-kern-ai/refinery-ml-exec-env:dev$IS_ARM64 .
