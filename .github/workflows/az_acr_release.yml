@@ -1,0 +1,13 @@
+name: 'ACR: Docker Release Images'
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - "dev"
+    
+jobs: 
+  call-az-acr-release:
+    uses: code-kern-ai/cicd-deployment-scripts/.github/workflows/az_acr_release.yml@dev
+    secrets: inherit
