@@ -2,12 +2,34 @@ name: 'ACR: Docker Release Images'
 
 on:
   workflow_dispatch:
-
+  
+  release:
+    types: [prereleased]
   push:
     branches:
       - "dev"
-    
+
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+
 jobs: 
+  call-gh-validate-release:
+    if: github.event_name == 'release'
+    uses: code-kern-ai/cicd-deployment-scripts/.github/workflows/gh_validate_release.yml@dev
+    secrets: inherit
+
   call-az-acr-release:
+    needs: [call-gh-validate-release]
+    if: always() && !failure()
     uses: code-kern-ai/cicd-deployment-scripts/.github/workflows/az_acr_release.yml@dev
     secrets: inherit
+
+  call-gh-release:
+    needs: [call-az-acr-release]
+    if: github.event_name == 'release' && !failure()
+    uses: code-kern-ai/cicd-deployment-scripts/.github/workflows/gh_release.yml@dev
+    secrets: inherit
+    with:
+      deployment_status: "success"
