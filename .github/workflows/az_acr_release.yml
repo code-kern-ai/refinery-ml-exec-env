@@ -8,7 +8,12 @@ on:
   push:
     branches:
       - "dev"
-    
+
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+
 jobs: 
   call-gh-validate-release:
     if: github.event_name == 'release'
