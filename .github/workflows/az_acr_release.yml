@@ -20,3 +20,11 @@ jobs:
     if: always() && !failure()
     uses: code-kern-ai/cicd-deployment-scripts/.github/workflows/az_acr_release.yml@dev
     secrets: inherit
+
+  call-gh-release:
+    needs: [call-az-acr-release]
+    if: !failure() && github.event_name == 'release'
+    uses: code-kern-ai/cicd-deployment-scripts/.github/workflows/gh_release.yml@dev
+    secrets: inherit
+    with:
+      deployment_status: "success"
