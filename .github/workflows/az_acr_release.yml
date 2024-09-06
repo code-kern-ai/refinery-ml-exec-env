@@ -23,7 +23,7 @@ jobs:
 
   call-gh-release:
     needs: [call-az-acr-release]
-    if: !failure() && github.event_name == 'release'
+    if: github.event_name == 'release' && !failure()
     uses: code-kern-ai/cicd-deployment-scripts/.github/workflows/gh_release.yml@dev
     secrets: inherit
     with:
