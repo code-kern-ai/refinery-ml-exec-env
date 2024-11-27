@@ -46,7 +46,7 @@ filelock==3.16.1
     #   huggingface-hub
     #   torch
     #   transformers
-fsspec==2024.9.0
+fsspec==2024.10.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
@@ -55,7 +55,7 @@ h11==0.14.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   uvicorn
-huggingface-hub==0.25.2
+huggingface-hub==0.26.2
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   tokenizers
@@ -81,7 +81,7 @@ joblib==1.4.2
     #   scikit-optimize
 lightgbm==4.1.0
     # via -r requirements/requirements.in
-markupsafe==3.0.1
+markupsafe==3.0.2
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   jinja2
@@ -106,7 +106,7 @@ numpy==1.23.4
     #   sequencelearn
     #   transformers
     #   xgboost
-packaging==24.1
+packaging==24.2
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
@@ -142,7 +142,7 @@ pyyaml==6.0.2
     #   huggingface-hub
     #   pyaml
     #   transformers
-regex==2024.9.11
+regex==2024.11.6
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   transformers
@@ -206,7 +206,7 @@ torch==2.2.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   sequencelearn
-tqdm==4.66.5
+tqdm==4.67.1
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
