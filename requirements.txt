@@ -10,7 +10,7 @@ annotated-types==0.7.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   pydantic
-anyio==4.6.2.post1
+anyio==4.8.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   starlette
@@ -21,16 +21,16 @@ botocore==1.28.5
     #   -r requirements/torch-cpu-requirements.txt
     #   boto3
     #   s3transfer
-certifi==2024.8.30
+certifi==2025.1.31
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   minio
     #   requests
-charset-normalizer==3.4.0
+charset-normalizer==3.4.1
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   requests
-click==8.1.7
+click==8.1.8
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   uvicorn
@@ -40,13 +40,13 @@ exceptiongroup==1.2.2
     #   anyio
 fastapi==0.115.2
     # via -r requirements/torch-cpu-requirements.txt
-filelock==3.16.1
+filelock==3.17.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
     #   torch
     #   transformers
-fsspec==2024.10.0
+fsspec==2025.3.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
@@ -55,7 +55,7 @@ h11==0.14.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   uvicorn
-huggingface-hub==0.26.2
+huggingface-hub==0.29.3
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   tokenizers
@@ -65,7 +65,7 @@ idna==3.10
     #   -r requirements/torch-cpu-requirements.txt
     #   anyio
     #   requests
-jinja2==3.1.4
+jinja2==3.1.6
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   torch
@@ -115,7 +115,7 @@ pandas==1.5.1
     # via -r requirements/torch-cpu-requirements.txt
 psycopg2-binary==2.9.9
     # via -r requirements/torch-cpu-requirements.txt
-pyaml==24.9.0
+pyaml==25.1.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   scikit-optimize
@@ -132,7 +132,7 @@ python-dateutil==2.9.0.post0
     #   -r requirements/torch-cpu-requirements.txt
     #   botocore
     #   pandas
-pytz==2024.2
+pytz==2025.1
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   pandas
@@ -155,7 +155,7 @@ s3transfer==0.6.2
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   boto3
-safetensors==0.4.5
+safetensors==0.5.3
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   transformers
@@ -176,7 +176,7 @@ scipy==1.13.1
     #   xgboost
 sequencelearn==0.0.9
     # via -r requirements/requirements.in
-six==1.16.0
+six==1.17.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   python-dateutil
@@ -198,7 +198,7 @@ threadpoolctl==3.5.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   scikit-learn
-tokenizers==0.19.1
+tokenizers==0.21.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   transformers
@@ -211,7 +211,7 @@ tqdm==4.67.1
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
     #   transformers
-transformers==4.41.2
+transformers==4.48.0
     # via -r requirements/torch-cpu-requirements.txt
 typing-extensions==4.12.2
     # via
