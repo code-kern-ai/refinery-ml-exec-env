@@ -59,8 +59,6 @@ fsspec==2025.7.0
     #   -r /home/runner/work/refinery-submodule-parent-images/refinery-submodule-parent-images/refinery-ml-exec-env/requirements/torch-cpu-requirements.txt
     #   huggingface-hub
     #   torch
-greenlet==3.2.3
-    # via sqlalchemy
 h11==0.16.0
     # via
     #   -r /home/runner/work/refinery-submodule-parent-images/refinery-submodule-parent-images/refinery-ml-exec-env/requirements/torch-cpu-requirements.txt
@@ -93,7 +91,7 @@ joblib==1.5.1
     #   -r /home/runner/work/refinery-submodule-parent-images/refinery-submodule-parent-images/refinery-ml-exec-env/requirements/torch-cpu-requirements.txt
     #   scikit-learn
     #   scikit-optimize
-lightgbm==4.1.0
+lightgbm==4.6.0
     # via -r requirements/requirements.in
 markupsafe==3.0.2
     # via
@@ -224,7 +222,7 @@ tokenizers==0.21.2
     # via
     #   -r /home/runner/work/refinery-submodule-parent-images/refinery-submodule-parent-images/refinery-ml-exec-env/requirements/torch-cpu-requirements.txt
     #   transformers
-torch==2.7.1+cpu
+torch==2.7.1
     # via
     #   -r /home/runner/work/refinery-submodule-parent-images/refinery-submodule-parent-images/refinery-ml-exec-env/requirements/torch-cpu-requirements.txt
     #   sequencelearn
