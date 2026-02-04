@@ -1,0 +1,271 @@
+---
+description: Machine learning patterns and best practices for active transfer learning
+globs: **/*.py
+alwaysApply: false
+---
+
+# ML Patterns and Best Practices
+
+## Active Transfer Learning Architecture
+
+### Base Model Pattern
+All ML models should inherit from `BaseModel` and implement the required abstract methods:
+
+```python
+# ✅ GOOD - Proper BaseModel implementation
+from abc import ABC, abstractmethod
+from . import util
+
+class BaseModel(ABC):
+    @abstractmethod
+    def __init__(self):
+        super().__init__()
+        self.embedding_name = None
+        self.min_confidence = None
+        self.label_names = None
+
+    @abstractmethod
+    def fit(self, embeddings, labels):
+        """Train the model on embeddings and labels."""
+        pass
+
+    @abstractmethod
+    def predict_proba(self, embeddings):
+        """Return prediction probabilities."""
+        pass
+
+    def fit_predict(self, embeddings, labels, records_ids, training_ids):
+        """Fit model and return predictions for all records."""
+        self.records_ids = records_ids
+        self.training_ids = training_ids
+        self.fit(embeddings, labels)
+        predictions = self.predict_proba(embeddings)
+        if self.label_names is None:
+            self.label_names = self.model.classes_
+        return predictions
+```
+
+### Classification vs Extraction
+- **Classification**: Single label per record (`ATLClassifier`)
+- **Extraction**: Sequence labeling with multiple spans per record (`ATLExtractor`)
+- Determine task type: `is_extractor = any([isinstance(val, list) for val in corpus_labels["manual"]])`
+
+## Data Processing Patterns
+
+### Embedding Handling
+```python
+# ✅ GOOD - Handle different embedding types
+if embedding_type == "ON_ATTRIBUTE":
+    # Single embedding per record: [num_records x embedding_dim]
+    embeddings = {
+        embedding_name: [
+            [float(y) for y in x[1:-1].split(", ")]
+            for x in embedding_df.data
+            if x != "data"
+        ]
+    }
+else:
+    # Multiple embeddings per record: [num_records x num_tokens x embedding_dim]
+    embeddings = {
+        embedding_name: [
+            [[float(z) for z in y.split(", ")] for y in x[2:-2].split("], [")]
+            for x in embedding_df.data
+            if x != "data"
+        ]
+    }
+```
+
+### Training Data Filtering
+```python
+# ✅ GOOD - Filter training data by training_ids
+def transform_corpus_classification_fit(
+    embeddings, labels_training, record_ids, training_ids
+):
+    """Filter embeddings and labels to only training examples."""
+    training_mask = [True if id in training_ids else False for id in record_ids]
+    labels_training = np.array(labels_training)[training_mask]
+    embedding_training = np.array(embeddings)[training_mask]
+    return embedding_training, labels_training
+```
+
+### Label Vector Construction (Extraction)
+```python
+# ✅ GOOD - Build label vectors for sequence labeling
+def build_label_vector(embedding_length: int, label_annotations: list) -> list:
+    """Create label vector with OUTSIDE tokens."""
+    label_vector = np.full([embedding_length], None)
+    for _, row in label_annotations.iterrows():
+        for token_idx in row.token_list:
+            label_vector[token_idx] = row.label_name
+    # Fill None values with OUTSIDE
+    np.place(label_vector, label_vector == None, CONSTANT__OUTSIDE)
+    return label_vector.tolist()
+```
+
+## Model Persistence
+
+### Saving Models
+```python
+# ✅ GOOD - Save trained models with descriptive names
+if os.path.exists("/inference"):
+    pickle_path = os.path.join(
+        "/inference", f"active-learner-{information_source_id}.pkl"
+    )
+    with open(pickle_path, "wb") as f:
+        pickle.dump(classifier, f)
+        print("Saved model to disk", flush=True)
+
+# ❌ BAD - Hardcoded paths or missing directory check
+pickle.dump(classifier, open("model.pkl", "wb"))  # No directory check
+```
+
+## Prediction Filtering
+
+### Confidence and Label Filtering
+```python
+# ✅ GOOD - Filter predictions by confidence and valid labels
+ml_results_by_record_id = {}
+for record_id, (probability, prediction) in zip(
+    corpus_ids, predictions_with_probabilities
+):
+    if (
+        probability > classifier.min_confidence
+        and prediction in classifier.label_names
+    ):
+        ml_results_by_record_id[record_id] = (probability, prediction)
+
+# ❌ BAD - No filtering
+ml_results_by_record_id[record_id] = (probability, prediction)  # Includes low-confidence predictions
+```
+
+### Extraction Result Processing
+```python
+# ✅ GOOD - Process extraction predictions with span detection
+df = pd.DataFrame(
+    list(zip(prediction, probability)),
+    columns=["prediction", "probability"],
+)
+df["next"] = df["prediction"].shift(-1)
+predictions_with_probabilities = []
+new_start_idx = True
+
+for idx, row in df.loc[
+    (df.prediction != CONSTANT__OUTSIDE)
+    & (df.prediction.isin(extractor.label_names))
+    & (df.probability > extractor.min_confidence)
+].iterrows():
+    if new_start_idx:
+        start_idx = idx
+        new_start_idx = False
+    if row.prediction != row.next:
+        prob = df.loc[start_idx:idx].probability.mean()
+        end_idx = idx + 1
+        predictions_with_probabilities.append(
+            [float(prob), row.prediction, start_idx, end_idx]
+        )
+        new_start_idx = True
+```
+
+## Data Transformation Utilities
+
+### Corpus Transformation Functions
+- `transform_corpus_classification_fit`: Filter training data for classification
+- `transform_corpus_extraction_fit`: Build label vectors and filter for extraction
+- `transform_corpus_classification_inference`: Convert embeddings to numpy array
+- `transform_corpus_extraction_inference`: Pass through embeddings (already in correct format)
+
+### Pandas DataFrame Operations
+```python
+# ✅ GOOD - Use pandas for structured data manipulation
+df = pd.DataFrame(
+    list(zip(prediction, probability)),
+    columns=["prediction", "probability"],
+)
+df["next"] = df["prediction"].shift(-1)  # Look ahead for span detection
+
+# ✅ GOOD - Disable chained assignment warnings when intentional
+pd.options.mode.chained_assignment = None  # default='warn'
+```
+
+## Error Handling for ML Operations
+
+### Embedding Parsing Errors
+```python
+# ✅ GOOD - Clear error messages for data parsing failures
+try:
+    embeddings = parse_embeddings(embedding_df)
+except Exception:
+    print("Can't parse the embedding. Please contact the support.", flush=True)
+    raise ValueError("Can't parse the embedding. Please contact the support.")
+
+# ❌ BAD - Silent failures or vague errors
+try:
+    embeddings = parse_embeddings(embedding_df)
+except Exception:
+    pass  # Swallows error
+```
+
+### Empty Prediction Results
+```python
+# ✅ GOOD - Informative message when no predictions
+if len(ml_results_by_record_id) == 0:
+    print(
+        "No records were predicted. Try lowering the confidence threshold.",
+        flush=True,
+    )
+
+# ❌ BAD - Silent failure
+if len(ml_results_by_record_id) == 0:
+    pass  # No feedback to user
+```
+
+## Progress Reporting for ML Operations
+
+### Progress Milestones
+Report progress at key stages:
+- `0.05`: Initialization complete
+- `0.5`: Model training complete (for extraction)
+- `0.8`: Model training complete (for classification)
+- `0.9`: Post-processing complete
+- `0.95`: Results filtering complete
+- `1.0`: Final results ready
+
+```python
+# ✅ GOOD - Progress reporting at milestones
+print("progress: 0.05", flush=True)
+classifier = ATLClassifier()
+prediction_probabilities = classifier.fit_predict(...)
+print("progress: 0.8", flush=True)
+# ... post-processing ...
+print("progress: 0.9", flush=True)
+# ... filtering ...
+print("progress: 0.95", flush=True)
+print("progress: 1", flush=True)
+```
+
+## Decorator Patterns
+
+### Parametrized Decorators
+The codebase uses parametrized decorators for model configuration:
+
+```python
+@parametrized
+def params_fit(function: Callable, embedding_name: str, train_test_split: float):
+    """Decorator to prepare training data before fit."""
+    # Transforms corpus embeddings and labels
+    # Filters to training_ids
+    # Calls original function with transformed data
+    pass
+
+@parametrized
+def params_inference(
+    function: Callable,
+    label_names: Optional[List[str]] = None,
+    min_confidence: float = 0.8,
+):
+    """Decorator to prepare inference data and set model parameters."""
+    # Transforms corpus embeddings for inference
+    # Sets min_confidence and label_names
+    # Calls original function with transformed embeddings
+    pass
+```

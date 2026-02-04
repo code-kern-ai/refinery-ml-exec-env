@@ -1,0 +1,91 @@
+---
+description: Core coding guidelines and best practices for refinery-ml-exec-env
+alwaysApply: true
+---
+
+# Core Coding Guidelines
+
+## Project Overview
+
+This is a containerized execution environment for active transfer learning in refinery. The codebase processes embeddings and labels, trains ML models (classification and extraction), and performs inference using scikit-learn and sequence-learn. It runs as a containerized function-as-a-service that receives input data via HTTP and returns ML predictions.
+
+## General Principles
+
+### Code Quality
+- **Readability over cleverness**: Code is read far more often than written
+- **Explicit over implicit**: Make intentions clear through naming and structure
+- **Fail fast**: Validate inputs early and raise clear errors
+- **Single responsibility**: Functions should do one thing well
+
+### Error Handling
+- Use specific exception types, not bare `except Exception`
+- Preserve traceback information when re-raising exceptions
+- Provide clear, actionable error messages with context
+- For containerized execution, print error messages to stdout/stderr with `flush=True`
+
+### Naming Conventions
+- Functions and variables: `snake_case`
+- Constants: `UPPER_SNAKE_CASE` (e.g., `CONSTANT__OUTSIDE`)
+- Classes: `PascalCase`
+- Private functions: Prefix with `__` (double underscore) only when truly private
+- Avoid magic suffixes like `_a2vybg` in new code - use descriptive names
+
+### Type Hints
+- Use type hints for all function signatures
+- Prefer modern Python 3.10+ syntax when possible:
+ - `str | None` instead of `Optional[str]` (if Python 3.10+)
+ - `list[str]` instead of `List[str]` (if Python 3.10+)
+ - `dict[str, int]` instead of `Dict[str, int]` (if Python 3.10+)
+- Use `Any` sparingly - prefer specific types or protocols
+- Use `object` instead of `Any` when accepting any object
+- Note: Current codebase uses `typing` module imports (`List`, `Dict`, `Tuple`, `Optional`) for compatibility
+
+### Global Variables
+- **Avoid global variables** when possible
+- If globals are necessary (e.g., runtime configuration), document why
+- Consider using a configuration class or dataclass instead
+- Group related globals into a single namespace object
+
+### Progress Reporting
+- **Use print statements with `flush=True`** for containerized execution environments
+- Format: `print("progress: X", flush=True)` where X is a float between 0.0 and 1.0
+- Progress messages are consumed by the container orchestrator
+- Include informative messages: `print("Preparing data for machine learning.", flush=True)`
+- Report progress at key milestones (e.g., 0.05, 0.5, 0.8, 0.9, 0.95, 1.0)
+
+### Magic Numbers and Strings
+- Extract magic numbers to named constants
+- Use enums or constants for string literals that represent states/types
+- Document the meaning of non-obvious values
+- Example: `CONSTANT__OUTSIDE = "OUTSIDE"` - enum from graphql-gateway
+
+### Function Length
+- Keep functions focused and under 50 lines when possible
+- Extract complex logic into helper functions
+- Use descriptive function names that explain purpose
+
+### Comments
+- Write self-documenting code first
+- Add comments for "why", not "what"
+- Document complex algorithms or business logic
+- Keep comments up-to-date with code changes
+- Document external dependencies (e.g., "enum from graphql-gateway")
+
+## ML-Specific Guidelines
+
+### Model Persistence
+- Save trained models using `pickle` to `/inference` directory when it exists
+- Use descriptive filenames: `f"active-learner-{information_source_id}.pkl"`
+- Check directory existence before writing: `if os.path.exists("/inference")`
+
+### Data Processing
+- Use pandas DataFrames for structured data manipulation
+- Use numpy arrays for numerical computations and embeddings
+- Handle ragged arrays appropriately (e.g., variable-length sequences)
+- Transform embeddings and labels according to task type (classification vs extraction)
+
+### Active Transfer Learning
+- Implement `BaseModel` abstract base class for ML models
+- Use `fit_predict` pattern for training and inference
+- Support both classification (`ATLClassifier`) and extraction (`ATLExtractor`) tasks
+- Filter predictions by confidence threshold (`min_confidence`) and label names

@@ -1,0 +1,261 @@
+---
+description: Python coding standards and type hint conventions for refinery-ml-exec-env
+globs: **/*.py
+alwaysApply: false
+---
+
+# Python Coding Standards
+
+## Type Hints
+
+### Type Hint Usage
+- Use type hints for all function signatures
+- Current codebase uses `typing` module imports for compatibility
+- Prefer modern Python 3.10+ syntax when upgrading:
+  - `str | None` instead of `Optional[str]`
+  - `list[str]` instead of `List[str]`
+  - `dict[str, int]` instead of `Dict[str, int]`
+
+```python
+# ✅ GOOD - Current codebase pattern (typing module)
+from typing import List, Dict, Tuple, Any, Optional
+
+def run_classification(
+    information_source_id: str,
+    corpus_embeddings: Dict[str, List[List[float]]],
+    corpus_labels: List[str],
+    corpus_ids: List[str],
+    training_ids: List[str],
+) -> Dict[str, Tuple[float, str]]:
+    pass
+
+# ✅ GOOD - Modern syntax (Python 3.10+, preferred for new code)
+def process_embeddings(
+    embeddings: dict[str, list[list[float]]],
+    labels: list[str]
+) -> dict[str, float]:
+    pass
+
+def get_value(key: str) -> str | None:
+    pass
+```
+
+### Type Aliases
+```python
+# ✅ GOOD - Use TypeAlias for complex types
+from typing import TypeAlias
+
+RecordDict: TypeAlias = dict[str, Any]
+RecordList: TypeAlias = list[RecordDict]
+
+# ❌ BAD - Simple assignment
+RecordDict = dict[str, Any]
+```
+
+### Protocols and Abstract Types
+```python
+# ✅ GOOD - Use protocols for flexible interfaces
+from typing import Protocol
+
+class DataProcessor(Protocol):
+    def process(self, data: dict[str, Any]) -> Any: ...
+
+def run_processor(processor: DataProcessor, data: dict[str, Any]) -> Any:
+    return processor.process(data)
+
+# ✅ GOOD - Use abstract types for function parameters
+from collections.abc import Mapping, Sequence
+
+def process_mapping(data: Mapping[str, Any]) -> None:
+    pass  # Accepts dict, OrderedDict, etc.
+```
+
+## Error Handling
+
+### Specific Exceptions
+```python
+# ✅ GOOD - Catch specific exceptions
+try:
+    embeddings = parse_embeddings(embedding_df)
+except ValueError as e:
+    print(f"Invalid embedding format: {e}", flush=True)
+    raise
+
+# ❌ BAD - Bare except or catching Exception
+try:
+    embeddings = parse_embeddings(embedding_df)
+except Exception:  # Too broad, swallows all errors
+    print("Error occurred", flush=True)
+    pass
+```
+
+### Preserve Tracebacks
+```python
+# ✅ GOOD - Preserve original exception context
+try:
+    embeddings = parse_embeddings(embedding_df)
+except ValueError as e:
+    print(f"Embedding parsing failed: {e}", flush=True)
+    raise ProcessingError(f"Failed to parse embeddings") from e
+
+# ❌ BAD - Lose original exception
+try:
+    embeddings = parse_embeddings(embedding_df)
+except ValueError as e:
+    raise ProcessingError(str(e))  # Loses traceback
+```
+
+### Error Messages
+```python
+# ✅ GOOD - Clear, actionable error messages
+if not isinstance(value, int):
+    raise TypeError(
+        f"Expected int, got {type(value).__name__} for attribute '{attr_name}'. "
+        f"Value: {value}"
+    )
+
+# ❌ BAD - Vague error messages
+if not isinstance(value, int):
+    raise TypeError("Invalid type")
+```
+
+## Output and Progress Reporting
+
+### Print Statements for Containerized Execution
+This codebase uses `print` statements with `flush=True` for containerized execution environments. The container orchestrator consumes these messages.
+
+```python
+# ✅ GOOD - Print with flush=True for container compatibility
+print("Preparing data for machine learning.", flush=True)
+print("progress: 0.05", flush=True)
+print("progress: 0.9", flush=True)
+print("Finished execution.", flush=True)
+
+# ✅ GOOD - Informative error messages
+try:
+    embeddings = parse_embeddings(data)
+except Exception:
+    print("Can't parse the embedding. Please contact the support.", flush=True)
+    raise ValueError("Can't parse the embedding. Please contact the support.")
+
+# ❌ BAD - Print without flush (may buffer in containers)
+print("progress: 0.5")  # May not appear immediately
+
+# ❌ BAD - Using logging module (not consumed by container orchestrator)
+import logging
+logger = logging.getLogger(__name__)
+logger.info("Processing")  # Not suitable for this containerized environment
+```
+
+### Progress Reporting Format
+- Use format: `print("progress: X", flush=True)` where X is a float between 0.0 and 1.0
+- Report progress at key milestones (e.g., 0.05, 0.5, 0.8, 0.9, 0.95, 1.0)
+- Include informative status messages before major operations
+
+## Constants and Configuration
+
+### Constants
+```python
+# ✅ GOOD - Named constants
+PROGRESS_REPORT_INTERVAL = 100
+DEFAULT_MIN_CONFIDENCE = 0.8
+CONSTANT__OUTSIDE = "OUTSIDE"
+
+def process_predictions(predictions: list, probabilities: list) -> dict:
+    if idx % PROGRESS_REPORT_INTERVAL == 0:
+        print(f"progress: {progress}", flush=True)
+
+# ❌ BAD - Magic numbers
+def process_predictions(predictions: list, probabilities: list) -> dict:
+    if idx % 100 == 0:  # What does 100 mean?
+        print(f"progress: {progress}", flush=True)
+```
+
+### Constants and External Dependencies
+```python
+# ✅ GOOD - Constants with documentation for external dependencies
+CONSTANT__OUTSIDE = "OUTSIDE"  # enum from graphql-gateway; if it changes, the extraction service breaks!
+
+# ✅ GOOD - Use constants or enums for data types
+from enum import Enum
+
+class EmbeddingType(str, Enum):
+    ON_ATTRIBUTE = "ON_ATTRIBUTE"
+    ON_RECORD = "ON_RECORD"
+
+def process_embeddings(embedding_type: EmbeddingType) -> None:
+    if embedding_type == EmbeddingType.ON_ATTRIBUTE:
+        # Process attribute-level embeddings
+        pass
+
+# ❌ BAD - String literals without constants
+def process_embeddings(embedding_type: str) -> None:
+    if embedding_type == "ON_ATTRIBUTE":  # Typo-prone, no documentation
+        pass
+```
+
+## Function Design
+
+### Single Responsibility
+```python
+# ✅ GOOD - Focused functions
+def validate_record(record: dict[str, Any]) -> None:
+    """Validate record structure and required fields."""
+    if "id" not in record:
+        raise ValueError("Record missing 'id' field")
+    if "data" not in record:
+        raise ValueError("Record missing 'data' field")
+
+def process_record(record: dict[str, Any]) -> Any:
+    """Process a single record and return calculated attribute."""
+    validate_record(record)
+    return calculate_attribute(record["data"])
+
+# ❌ BAD - Function doing too much
+def process_record(record: dict[str, Any]) -> Any:
+    # Validation
+    if "id" not in record:
+        raise ValueError("Record missing 'id' field")
+    # Processing
+    result = calculate_attribute(record["data"])
+    # Caching
+    cache[record["id"]] = result
+    # Progress reporting
+    update_progress()
+    return result
+```
+
+### Function Length
+- Keep functions under 50 lines when possible
+- Extract complex logic into helper functions
+- Use descriptive names that explain purpose
+
+## Imports
+
+### Import Organization
+```python
+# ✅ GOOD - Organized imports (current codebase pattern)
+# Standard library
+import json
+import os
+import pickle
+import sys
+from typing import List, Dict, Tuple, Any, Optional, Callable
+
+# Third-party
+import numpy as np
+import pandas as pd
+import requests
+
+# Local
+from util import util
+from util.active_transfer_learning import ATLClassifier, ATLExtractor
+```
+
+### Import Best Practices
+- Group imports: stdlib, third-party, local
+- Use absolute imports when possible
+- Avoid wildcard imports (`from module import *`)
+- Import only what you need
+- Use standard aliases: `import numpy as np`, `import pandas as pd`
+- Import local modules using relative imports within packages: `from . import util`
