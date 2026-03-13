@@ -37,7 +37,7 @@ botocore==1.39.17
     #   -r requirements/torch-cpu-requirements.txt
     #   boto3
     #   s3transfer
-certifi==2026.1.4
+certifi==2026.2.25
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   minio
@@ -46,7 +46,7 @@ cffi==2.0.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   argon2-cffi-bindings
-charset-normalizer==3.4.4
+charset-normalizer==3.4.5
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   requests
@@ -62,18 +62,18 @@ filelock==3.20.3
     #   huggingface-hub
     #   torch
     #   transformers
-fsspec==2026.1.0
+fsspec==2026.2.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
     #   torch
-googleapis-common-protos==1.72.0
+googleapis-common-protos==1.73.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   opentelemetry-exporter-otlp-proto-grpc
-greenlet==3.3.1
+greenlet==3.3.2
     # via sqlalchemy
-grpcio==1.76.0
+grpcio==1.78.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -81,11 +81,11 @@ h11==0.16.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   uvicorn
-hf-xet==1.2.0
+hf-xet==1.4.2
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
-huggingface-hub==0.36.1
+huggingface-hub==0.36.2
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   tokenizers
@@ -208,7 +208,7 @@ protobuf==6.33.5
     #   opentelemetry-proto
 psycopg2-binary==2.9.9
     # via -r requirements/torch-cpu-requirements.txt
-pyaml==25.7.0
+pyaml==26.2.1
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   scikit-optimize
@@ -233,7 +233,7 @@ python-dateutil==2.9.0.post0
     #   -r requirements/torch-cpu-requirements.txt
     #   botocore
     #   pandas
-pytz==2025.2
+pytz==2026.1.post1
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   pandas
@@ -243,7 +243,7 @@ pyyaml==6.0.3
     #   huggingface-hub
     #   pyaml
     #   transformers
-regex==2026.1.15
+regex==2026.2.28
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   transformers
