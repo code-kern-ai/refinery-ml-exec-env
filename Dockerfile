@@ -1,4 +1,4 @@
-FROM kernai/refinery-parent-images:v2.4.0-torch-cpu
+FROM kernai/refinery-parent-images:v2.5.0-torch-cpu
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -y curl libgomp1 && \
