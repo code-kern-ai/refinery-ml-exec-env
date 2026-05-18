@@ -39,7 +39,7 @@ botocore==1.39.17
     #   -r requirements/torch-cpu-requirements.txt
     #   boto3
     #   s3transfer
-certifi==2026.2.25
+certifi==2026.4.22
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   httpcore
@@ -54,7 +54,7 @@ charset-normalizer==3.4.7
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   requests
-click==8.3.2
+click==8.4.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   typer
@@ -66,16 +66,16 @@ filelock==3.20.3
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
     #   torch
-fsspec==2026.3.0
+fsspec==2026.4.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
     #   torch
-googleapis-common-protos==1.74.0
+googleapis-common-protos==1.75.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   opentelemetry-exporter-otlp-proto-grpc
-greenlet==3.3.2
+greenlet==3.5.0
     # via sqlalchemy
 grpcio==1.80.0
     # via
@@ -86,7 +86,7 @@ h11==0.16.0
     #   -r requirements/torch-cpu-requirements.txt
     #   httpcore
     #   uvicorn
-hf-xet==1.4.3
+hf-xet==1.5.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
@@ -98,12 +98,12 @@ httpx==0.28.1
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
-huggingface-hub==1.9.1
+huggingface-hub==1.15.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   tokenizers
     #   transformers
-idna==3.11
+idna==3.15
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   anyio
@@ -129,7 +129,7 @@ joblib==1.5.3
     #   scikit-optimize
 lightgbm==4.6.0
     # via -r requirements/requirements.in
-markdown-it-py==4.0.0
+markdown-it-py==4.2.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   rich
@@ -213,7 +213,7 @@ opentelemetry-util-http==0.60b1
     #   -r requirements/torch-cpu-requirements.txt
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-fastapi
-packaging==26.0
+packaging==26.2
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
@@ -259,7 +259,7 @@ python-dateutil==2.9.0.post0
     #   -r requirements/torch-cpu-requirements.txt
     #   botocore
     #   pandas
-pytz==2026.1.post1
+pytz==2026.2
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   pandas
@@ -269,13 +269,13 @@ pyyaml==6.0.3
     #   huggingface-hub
     #   pyaml
     #   transformers
-regex==2026.4.4
+regex==2026.5.9
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   transformers
-requests==2.33.0
+requests==2.34.2
     # via -r requirements/torch-cpu-requirements.txt
-rich==14.3.3
+rich==15.0.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   typer
@@ -341,7 +341,7 @@ tqdm==4.67.3
     #   transformers
 transformers==5.5.0
     # via -r requirements/torch-cpu-requirements.txt
-typer==0.24.1
+typer==0.25.1
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
@@ -367,7 +367,7 @@ typing-inspection==0.4.2
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   pydantic
-urllib3==2.6.3
+urllib3==2.7.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   botocore
@@ -381,7 +381,7 @@ wrapt==1.17.3
     #   opentelemetry-instrumentation
 xgboost==2.0.1
     # via -r requirements/requirements.in
-zipp==3.23.0
+zipp==3.23.1
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   importlib-metadata
