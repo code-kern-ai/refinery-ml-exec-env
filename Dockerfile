@@ -30,9 +30,11 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y curl libgomp1 && \
     rm -rf /var/lib/apt/lists/*
 
+RUN mkdir -p /inference && chown 65532:65532 /inference
+
 COPY --from=builder --chown=65532:65532 ${VENV_PATH} ${VENV_PATH}
 COPY --from=builder --chown=65532:65532 /app /app
 
 USER 65532:65532
 
-ENTRYPOINT ["/run.sh"]
+ENTRYPOINT ["/app/run.sh"]
