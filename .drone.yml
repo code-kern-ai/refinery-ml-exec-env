@@ -8,6 +8,8 @@ platform:
 steps:
   - name: build and publish
     image: plugins/docker:21
+    environment:
+      BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
     settings:
       platform: linux/amd64
       base_image_registry: dhi.io
@@ -72,6 +74,8 @@ platform:
 steps:
   - name: build and publish
     image: plugins/docker:21
+    environment:
+      BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
     settings:
       platform: linux/arm64
       base_image_registry: dhi.io
@@ -108,7 +112,14 @@ platform:
 steps:
   - name: build and publish
     image: plugins/docker:21
+    environment:
+      BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
     settings:
+      base_image_registry: dhi.io
+      base_image_username:
+        from_secret: dockerhub_username
+      base_image_password:
+        from_secret: dockerhub_password
       username:
         from_secret: dockerhub_username
       password:
@@ -132,7 +143,14 @@ platform:
 steps:
   - name: build and publish
     image: plugins/docker:21
+    environment:
+      BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
     settings:
+      base_image_registry: dhi.io
+      base_image_username:
+        from_secret: dockerhub_username
+      base_image_password:
+        from_secret: dockerhub_password
       username:
         from_secret: dockerhub_username
       password:
