@@ -13,7 +13,7 @@ WORKDIR /app
 COPY --from=venv-source ${VENV_PATH} ${VENV_PATH}
 
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y curl libgomp1 && \
+    apt-get install --no-install-recommends -y libgomp1 && \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
@@ -37,4 +37,4 @@ COPY --from=builder --chown=65532:65532 /app /app
 
 USER nonroot
 
-ENTRYPOINT ["/app/run.sh"]
+ENTRYPOINT ["/opt/venv/bin/python", "-u", "/app/run_ml.py"]
