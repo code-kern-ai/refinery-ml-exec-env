@@ -8,6 +8,14 @@ import pickle
 from typing import List, Dict, Tuple, Any
 
 
+def download_file(url: str, target_file: str, append: bool = False) -> None:
+    response = requests.get(url, timeout=60)
+    response.raise_for_status()
+    mode = "ab" if append else "wb"
+    with open(target_file, mode) as outfile:
+        outfile.write(response.content)
+
+
 def run_classification(
     information_source_id: str,
     corpus_embeddings: Dict[str, List[List[float]]],
@@ -125,7 +133,17 @@ def run_extraction(
 
 
 if __name__ == "__main__":
-    _, payload_url = sys.argv
+    if len(sys.argv) != 5:
+        raise ValueError(
+            "Expected arguments: <input_url> <atl_code_url> <embedding_url> <payload_url>"
+        )
+
+    _, input_url, atl_code_url, embedding_url, payload_url = sys.argv
+
+    download_file(input_url, "input.json")
+    download_file(atl_code_url, "util/active_transfer_learning.py", append=True)
+    download_file(embedding_url, "embedding.csv.bz2")
+
     print("Preparing data for machine learning.", flush=True)
 
     (
