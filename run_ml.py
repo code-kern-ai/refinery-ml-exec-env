@@ -153,6 +153,7 @@ if __name__ == "__main__":
         corpus_ids,
         training_ids,
     ) = util.get_corpus()
+    print(corpus_embeddings, flush=True)
     is_extractor = any([isinstance(val, list) for val in corpus_labels["manual"]])
 
     if is_extractor:
