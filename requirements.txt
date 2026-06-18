@@ -15,7 +15,7 @@ annotated-types==0.7.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   pydantic
-anyio==4.13.0
+anyio==4.14.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   httpx
@@ -39,7 +39,7 @@ botocore==1.39.17
     #   -r requirements/torch-cpu-requirements.txt
     #   boto3
     #   s3transfer
-certifi==2026.4.22
+certifi==2026.5.20
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   httpcore
@@ -54,19 +54,20 @@ charset-normalizer==3.4.7
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   requests
-click==8.4.0
+click==8.4.1
     # via
     #   -r requirements/torch-cpu-requirements.txt
+    #   huggingface-hub
     #   typer
     #   uvicorn
-fastapi==0.120.1
+fastapi==0.136.3
     # via -r requirements/torch-cpu-requirements.txt
-filelock==3.20.3
+filelock==3.29.4
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
     #   torch
-fsspec==2026.4.0
+fsspec==2026.6.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
@@ -75,9 +76,9 @@ googleapis-common-protos==1.75.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   opentelemetry-exporter-otlp-proto-grpc
-greenlet==3.5.0
+greenlet==3.5.1
     # via sqlalchemy
-grpcio==1.80.0
+grpcio==1.81.1
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -86,7 +87,7 @@ h11==0.16.0
     #   -r requirements/torch-cpu-requirements.txt
     #   httpcore
     #   uvicorn
-hf-xet==1.5.0
+hf-xet==1.5.1
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
@@ -98,12 +99,12 @@ httpx==0.28.1
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
-huggingface-hub==1.15.0
+huggingface-hub==1.19.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   tokenizers
     #   transformers
-idna==3.15
+idna==3.18
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   anyio
@@ -147,6 +148,10 @@ mpmath==1.3.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   sympy
+narwhals==2.22.1
+    # via
+    #   -r requirements/torch-cpu-requirements.txt
+    #   scikit-learn
 networkx==3.6.1
     # via
     #   -r requirements/torch-cpu-requirements.txt
@@ -218,6 +223,7 @@ packaging==26.2
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
     #   opentelemetry-instrumentation
+    #   scikit-optimize
     #   transformers
 pandas==1.5.1
     # via -r requirements/torch-cpu-requirements.txt
@@ -283,16 +289,16 @@ s3transfer==0.13.1
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   boto3
-safetensors==0.7.0
+safetensors==0.8.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   transformers
-scikit-learn==1.5.2
+scikit-learn==1.9.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   scikit-optimize
     #   sequencelearn
-scikit-optimize==0.9.0
+scikit-optimize==0.10.2
     # via -r requirements/torch-cpu-requirements.txt
 scipy==1.16.3
     # via
@@ -314,7 +320,7 @@ six==1.17.0
     #   python-dateutil
 sqlalchemy==1.4.42
     # via -r requirements/torch-cpu-requirements.txt
-starlette==0.49.3
+starlette==1.3.1
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   fastapi
@@ -330,16 +336,16 @@ tokenizers==0.22.2
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   transformers
-torch==2.8.0+cpu
+torch==2.12.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   sequencelearn
-tqdm==4.67.3
+tqdm==4.68.2
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   huggingface-hub
     #   transformers
-transformers==5.5.0
+transformers==5.12.1
     # via -r requirements/torch-cpu-requirements.txt
 typer==0.25.1
     # via
@@ -366,6 +372,7 @@ typing-extensions==4.15.0
 typing-inspection==0.4.2
     # via
     #   -r requirements/torch-cpu-requirements.txt
+    #   fastapi
     #   pydantic
 urllib3==2.7.0
     # via
@@ -381,7 +388,10 @@ wrapt==1.17.3
     #   opentelemetry-instrumentation
 xgboost==2.0.1
     # via -r requirements/requirements.in
-zipp==3.23.1
+zipp==4.1.0
     # via
     #   -r requirements/torch-cpu-requirements.txt
     #   importlib-metadata
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools
